@@ -55,4 +55,5 @@ Since the selections are random, the exact output can vary with each call to `gr
 
 ## wtf
 
-This is an alias for `ask` with this prompt: `Explain how the program arrived at this state, including the cause of any errors. Be concise.`
+This is an alias for `ask` with this prompt: `Explain how the program arrived at this state, including the cause of any
+errors. Be concise.` Add one or more `?` chars to the command to provide more context to the model.

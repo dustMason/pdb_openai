@@ -1,3 +1,4 @@
+import inspect
 import pdb
 import sys
 
@@ -18,7 +19,7 @@ class Debug(pdb.Pdb):
         self._history: list[str] = []
 
     def message(self, msg: str) -> None:
-        self._history.append(msg)
+        self._history.append(str(msg))
         super(Debug, self).message(msg)
 
     def default(self, line: str) -> None:
@@ -65,7 +66,15 @@ class Debug(pdb.Pdb):
         print()
 
     def do_wtf(self, line: str) -> None:
-        self.do_ask("Explain how the program arrived at this state, including the cause of any errors. Be concise.")
+        prompt = "Explain how the program arrived at this state, including the cause of any errors. Be concise."
+        if line.count("?") > 0:
+            prompt += "\nExtra debug info:\n\n"
+            prompt += "\n\n".join([
+                f"{self.curframe_locals=}",
+                f"{self.curframe.f_globals=}",
+                f"inspect.stack()={format_call_stack(self.stack)}",
+            ])
+        self.do_ask(prompt)
 
     def do_gen(self, line: str) -> None:
         self._history.append(f"[gen] {line}")
@@ -89,9 +98,6 @@ class Debug(pdb.Pdb):
             ns.update(locals)
             exec(code, ns, locals)
 
-    def _history_index(self) -> int:
-        return len(self._history)
-
 
 def trim_markdown(inp: str) -> str:
     def delete_prefix(prefix, text):
@@ -105,3 +111,21 @@ def trim_markdown(inp: str) -> str:
         return text
 
     return delete_prefix("python", delete_prefix("```", delete_suffix("```", inp.strip().rstrip())))
+
+
+def format_call_stack(stack):
+    formatted_stack = []
+    for frame, _ in stack:
+        frame_info = inspect.getframeinfo(frame, context=3)
+        filename = frame_info.filename
+        lineno = frame_info.lineno
+        function = frame_info.function
+        lines = frame_info.code_context
+        formatted_stack.append(f"{filename}:{lineno} - {function}")
+        for line in lines:
+            formatted_stack.append(line)
+    return "".join(formatted_stack)
+
+
+if __name__ == "__main__":
+    stop()

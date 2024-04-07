@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pdb_openai",
-    version="0.0.5",
+    version="0.0.6",
     author="Jordan Sitkin",
     author_email="jordan@fiftyfootfoghorn.com",
     description="A python debugger with OpenAI integrations",
