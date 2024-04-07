@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+from pdb_openai import __version__
 
 setup(
     name="pdb_openai",
-    version="0.0.6",
+    version=__version__,
     author="Jordan Sitkin",
     author_email="jordan@fiftyfootfoghorn.com",
     description="A python debugger with OpenAI integrations",

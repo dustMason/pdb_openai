@@ -96,21 +96,14 @@ class Debug(pdb.Pdb):
             locals = self.curframe_locals
             ns = self.curframe.f_globals.copy()
             ns.update(locals)
-            exec(code, ns, locals)
+            try:
+                exec(code, ns, locals)
+            except BaseException:
+                self._error_exc()
 
 
 def trim_markdown(inp: str) -> str:
-    def delete_prefix(prefix, text):
-        if text.startswith(prefix):
-            return text[len(prefix):]
-        return text
-
-    def delete_suffix(suffix, text):
-        if text.endswith(suffix):
-            return text[:-len(suffix)]
-        return text
-
-    return delete_prefix("python", delete_prefix("```", delete_suffix("```", inp.strip().rstrip())))
+    return inp.strip().rstrip().removeprefix("```python").removeprefix("```").removesuffix("```")
 
 
 def format_call_stack(stack):
