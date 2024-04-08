@@ -18,12 +18,13 @@ argument to the `stop` function which triggers a breakpoint in your code.
 Use this debugger similar to how you would invoke pdb:
 
 ```
-from pdb_openai import debug; debug.stop()
+from pdb_openai import debug; debug.set_trace()
 ```
 
 Once in the session, you can use 3 new commands in addition to the standard pdb workflow. As you interact with the
 debugger, the session history including input, output and errors are stored in memory. When any of the commands below
-are invoked, the model gets a transcript of the session in addition to your prompt.
+are invoked, the model gets a transcript of the session in addition to your prompt. See the [examples](examples) dir
+for more usage examples.
 
 ## gen
 

@@ -5,9 +5,39 @@ import sys
 import openai
 
 
-def stop(model_name="gpt-4-turbo-preview", api_key=None, debug_prompts=False):
-    debugger = Debug(model_name=model_name, api_key=api_key, debug_prompts=debug_prompts)
+def get_default_debugger_config():
+    return {
+        'model_name': "gpt-4-turbo-preview",
+        'api_key': None,
+        'debug_prompts': False
+    }
+
+
+def set_trace(**kwargs):
+    config = get_default_debugger_config()
+    config.update(kwargs)
+    debugger = Debug(**config)
     debugger.set_trace(sys._getframe().f_back)
+
+
+def post_mortem(t=None, wtf=False, **kwargs):
+    t = t or sys.exc_info()[2]
+    if not t:
+        raise ValueError("A valid traceback must be passed if no exception is being handled")
+    config = get_default_debugger_config()
+    config.update(kwargs)
+    debugger = Debug(**config)
+    debugger.reset()
+    if wtf:
+        def preloop():
+            debugger.do_wtf("??")
+
+        debugger.preloop = preloop
+    debugger.interaction(None, t)
+
+
+def pm():
+    post_mortem(sys.last_traceback)
 
 
 class Debug(pdb.Pdb):
@@ -130,4 +160,4 @@ def format_call_stack(stack, context=3):
 
 
 if __name__ == "__main__":
-    stop(debug_prompts=True)
+    set_trace(debug_prompts=True)
